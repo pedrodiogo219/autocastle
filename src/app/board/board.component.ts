@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { GameService } from '../services/game.service';
 
 @Component({
   selector: 'app-board',
@@ -9,7 +10,9 @@ export class BoardComponent implements OnInit {
   board: any;
   config: any;
 
-  constructor() { }
+  constructor(
+    private gameService: GameService
+  ) { }
 
   ngOnInit(): void {
     this.config = {
@@ -19,6 +22,7 @@ export class BoardComponent implements OnInit {
       pieceTheme: 'assets/wikipedia/{piece}.png'
     }
     this.board = Chessboard('myBoard', this.config);
+    this.gameService.processGame();
   }
 
 }
