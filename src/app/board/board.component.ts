@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { GameService } from '../services/game.service';
+import { gameResponse, GameService } from '../services/game.service';
 
 @Component({
   selector: 'app-board',
@@ -9,20 +9,32 @@ import { GameService } from '../services/game.service';
 export class BoardComponent implements OnInit {
   board: any;
   config: any;
+  states: string[] = [];
 
   constructor(
     private gameService: GameService
-  ) { }
-
-  ngOnInit(): void {
+  ) {
     this.config = {
       draggable: true,
       dropOffBoard: 'snapback', // this is the default
       position: 'start',
-      pieceTheme: 'assets/wikipedia/{piece}.png'
+      pieceTheme: 'assets/wikipedia/{piece}.png',
     }
-    this.board = Chessboard('myBoard', this.config);
-    this.gameService.processGame();
   }
 
+  ngOnInit(): void {
+    this.board = Chessboard('myBoard', this.config);
+
+    this.gameService.processGame().subscribe(async (response: gameResponse) => {
+      this.board.position(response.position);
+      this.states = response.states;
+    });
+  }
+
+  async start(){
+    for (let state of this.states){
+      await new Promise(resolve => setTimeout(resolve, 500));
+      this.board.position(state);
+    }
+  }
 }
