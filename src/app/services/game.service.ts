@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, firstValueFrom } from 'rxjs';
 
 export interface gameResponse{
   position: string,
@@ -17,7 +17,17 @@ export class GameService {
     private http: HttpClient
   ) { }
 
-  processGame(){
-    return this.http.get(environment.API_URL + '/game') as Observable<gameResponse>
+  async processGame(fenPosition?: string): Promise<gameResponse>{
+    const options: {
+      params?: {
+        [param: string]: string;
+      };
+    } = {}
+
+    if (fenPosition)
+      options['params'] = {position: fenPosition}
+
+    const getRequest = this.http.get(environment.API_URL + '/game', options) as Observable<gameResponse>;
+    return await firstValueFrom(getRequest); 
   }
 }

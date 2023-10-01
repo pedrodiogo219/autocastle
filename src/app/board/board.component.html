@@ -1,3 +1,4 @@
 <div id="myBoard" style="width: 400px"></div>
 
-<button (click)="start()">start</button>
+<button (click)="calculate()" >calculate</button>
+<button (click)="start()" [disabled]="states.length === 0">start</button>
